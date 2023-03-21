@@ -1,0 +1,242 @@
+﻿@page "/flights"
+@using Assignment_2_kevinlehuu.Data
+@using Microsoft.Maui.Storage
+@using System.IO
+@using System.Text.Json
+
+@*button sizing and layout*@
+<head>
+    <style>
+        .button {
+            border: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .button1 {
+            width: 300px;
+        }
+
+        .button2 {
+            width: 250px;
+        }
+    </style>
+</head>
+
+@*flight finder heading*@
+<center><h1 style="font-size:20px;">Flight Finder</h1></center>
+<br \>
+<br \>
+
+@*flight finder forms*@
+<form>
+    <div class="row">
+
+        @*"From" box form*@
+        <div class="col">
+            <label>From:</label>
+            <select @onchange="PopulateAirports">
+                <option>Select an Airport</option>
+                @foreach (var u in airportName)
+                {
+                    <option value ="@u.AirportCode.">@u.AirportCode</option>
+                }
+            </select>
+        </div>
+
+        @*"To" box form*@
+        <div class="col">
+            <label>To:</label>
+            <select @onchange ="PopulateAirports">
+                <option>Select an Airport</option>
+                @foreach (var u in airportName)
+                {
+                    <option value="@u.AirportCode.">@u.AirportCode</option>
+                }
+            </select>
+        </div>
+
+        @*"Day" box form*@
+        <div class="col">
+            <label>Day:</label>
+            <select @bind = "day">
+                <option>Select a day</option>
+                <option value="Any">Any</option>
+                <option value="Sunday">Sunday</option>
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturaday">Saturday</option>
+            </select>
+        </div>
+
+        @*Find Flights button*@
+        <div class="col">
+            <button class="btn btn-primary btn-sm btn-block button1" @onclick = "FlightFinder">Find Flights</button>
+        </div> 
+
+    </div>
+</form>
+<br/> 
+<br/>
+
+@*flights heading*@
+<center><h2 style="font-size:20px;">Flights</h2></center>
+
+@*choose flight form*@
+    <div class="row align-items-center">
+        <div class = "col">
+        <label>Flights</label>
+        <select @onchange="ChooseFlight" value ="@flightChosen">
+            <option value="">Select a flight</option>
+            @if (matchingFlights != null)
+            {
+                @foreach (var flight in matchingFlights)
+                {
+                    <option value="@flight.FlightCode">
+                        @flight.FlightCode, 
+                        @flight.Airline, 
+                        @flight.OriginAirport, 
+                        @flight.DestAirport, 
+                        @flight.Day, 
+                        @flight.Time, 
+                        @flight.Cost
+                        </option>
+                }
+            }
+        </select>
+        </div>
+    </div>
+<br />
+
+@*reserve heading*@
+<center><h3 style="font-size:20px;">Reserve</h3></center>
+
+@*reservation forms*@
+<form>
+
+    @*flight code form*@
+    <div class="mb-3">
+        <label for="exampleFormControlInput1">Flight code:</label>
+        <input class="form-control" id="formGroupExampleInput" placeholder="Flight code" readonly>
+    </div>
+
+    @*airline form*@
+    <div class="mb-3">
+        <label for="exampleFormControlInput1">Airline:</label>
+        <input class="form-control" id="formGroupExampleInput" placeholder="Airline" readonly>
+    </div>
+
+    @*day form*@
+    <div class="mb-3">
+        <label for="exampleFormControlInput1">Day:</label>
+        <input class="form-control" id="formGroupExampleInput" placeholder="Day" readonly>
+    </div>
+
+    @*time form*@
+    <div class="mb-3">
+        <label for="exampleFormControlInput1">Time:</label>
+        <input class="form-control" id="formGroupExampleInput" placeholder="Time" readonly>
+    </div>
+
+    @*cost form*@
+    <div class="mb-3">
+        <label for="exampleFormControlInput1">Cost:</label>
+        <input class="form-control" id="formGroupExampleInput" placeholder="Cost" readonly>
+    </div>
+
+    @*allow input for these forms*@
+    @*name input form*@
+    <div class="form-group">
+        <label for="exampleFormControlInput1">Name:</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Name">
+    </div>
+   
+    @*citizenship input form*@
+    <div class="form-group">
+        <label for="exampleFormControlInput1">Citizenship:</label>
+        <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Citizenship">
+    </div>
+
+    @*reserve button*@
+    <div class="text-center">
+        <br />
+        <div class="center">
+            <button class="btn btn-primary btn-sm button2">Reserve</button>
+        </div>
+    </div>
+</form>
+<br />
+
+
+
+@code {
+    //airport attributes
+    public string day;
+    public string originAirport;
+    public string destAirport;
+    
+    //flight and reservation attributes
+    private Flight chosenFlight;
+    public string flightChosen;
+    public string airline;
+    public double cost;
+    public string time;
+    public string dayOfFlight;
+    public List<Flight> matchingFlights;
+
+    //create new flight manager object
+    FlightManager fm = new FlightManager();
+
+    //create airport and flight lists
+    List<Airport> airportName = FlightManager.GetAirports();
+    List<Flight> flightDetails = FlightManager.GetFlights();
+
+
+    //populate airports method
+    private void PopulateAirports(ChangeEventArgs e)
+    {
+        originAirport = e.Value.ToString();
+        destAirport = e.Value.ToString();
+    }
+
+
+    //flight find method
+    private void FlightFinder()
+    {
+        matchingFlights = FlightManager.FindFlights(originAirport, destAirport, day);  //finds matching flights base on arguments
+    }
+
+    //choose flight method
+    private void ChooseFlight(ChangeEventArgs e)
+    {
+        flightChosen = e.Value.ToString();
+
+        chosenFlight = matchingFlights.FirstOrDefault(f => f.FlightCode == flightChosen);
+
+        if (chosenFlight != null)
+        {
+            airline = chosenFlight.Airline;
+            cost = chosenFlight.Cost;
+            time = chosenFlight.Time;
+            dayOfFlight = chosenFlight.Day;
+            originAirport = chosenFlight.OriginAirport;
+            destAirport = chosenFlight.DestAirport;
+        }
+    }
+
+    /*private void FlightSelected(string flightCode/*, string airline, string Time, int seats, double cost)
+    {
+        //selectedFlight = flightCode;
+    }
+
+    private void HandleFlightSelection(ChangeEventArgs e)
+    {
+        FlightSelected(e.Value.ToString());
+    }*/
+
+
+}
+

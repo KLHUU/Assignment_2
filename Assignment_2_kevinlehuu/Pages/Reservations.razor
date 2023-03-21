@@ -1,0 +1,82 @@
+﻿@page "/reservations"
+@using Assignment_2_kevinlehuu.Data
+@using Microsoft.Maui.Storage
+@using System.IO
+@using System.Text.Json
+
+<h1>Reservations</h1>
+
+<h4 style="text-align:center">Reservation Finder</h4>
+<div class="row align-items-center">
+    <div class="col">
+        <label for="formGroupExampleInput" class="form-label">Code:</label>
+        <input type="text" class="form-control" placeholder="Any" aria-label="Any">
+    </div>
+    <div class="col">
+        <label for="formGroupExampleInput" class="form-label">Airline:</label>
+        <input type="text" class="form-control" placeholder="Any" aria-label="Any">
+    </div>
+    <div class="col">
+        <label for="formGroupExampleInput" class="form-label">Name:</label>
+        <input type="text" class="form-control" placeholder="Any" aria-label="Any">
+    </div>
+    <div class="col-auto">
+        <label for="formGroupExampleInput" class="form-label"> </label>
+        <button class="btn btn-primary" @onclick="IncrementCount">Find Reservations</button>
+    </div>
+    <br />
+</div>
+<br />
+<br />
+
+<!--Flights section-->
+<h4 style="text-align:center">Reservations</h4>
+<div class="mb-3">
+    <label for="formGroupExampleInput" class="form-label">Flights</label>
+    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Loading...">
+</div>
+<br />
+
+<!--Reserve section-->
+<h4 style="text-align:center">Reserve</h4>
+<div class="mb-3">
+    <label for="formGroupExampleInput" class="form-label">Reservation Code</label>
+    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Flight">
+</div>
+<div class="mb-3">
+    <label for="formGroupExampleInput2" class="form-label">Flight Code</label>
+    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Airline">
+</div>
+<div class="mb-3">
+    <label for="formGroupExampleInput" class="form-label">Airline</label>
+    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Day">
+</div>
+<div class="mb-3">
+    <label for="formGroupExampleInput2" class="form-label">Cost</label>
+    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Time">
+</div>
+<div class="mb-3">
+    <label for="formGroupExampleInput" class="form-label">Name</label>
+    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="0">
+</div>
+<div class="mb-3">
+    <label for="formGroupExampleInput2" class="form-label">Citizenship</label>
+    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Name">
+</div>
+<div class="mb-3">
+    <label for="formGroupExampleInput2" class="form-label">Status</label>
+    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Active">
+</div>
+<br />
+<br />
+<button class="btn btn-primary" style="text-align:center" @onclick="IncrementCount">      SAVE      </button>
+
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}
